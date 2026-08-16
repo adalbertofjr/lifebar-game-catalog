@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credits — LifeBar</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <a class="lang-toggle" href="../credits.html" aria-label="Mudar para português">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    PT
+  </a>
+  <header class="app-header">
+    <h1 class="brand">
+      <img class="pixel-wordmark" src="../assets/lifebar-logo.svg" width="248" height="44" alt="LifeBar">
+    </h1>
+    <span class="platform-tag">Credits</span>
+    <p class="subtitle"><a href="index.html">&larr; Back to catalog</a></p>
+  </header>
+
+  <main>
+    <section class="credits-section">
+      <h2>Catalog data</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>List of licensed games</strong> — <a href="https://en.wikipedia.org/wiki/List_of_Sega_Genesis_games#Licensed_games" target="_blank" rel="noopener">Wikipedia, List of Sega Genesis games</a>.
+          Source of the 880 titles (developer, publisher, regional release dates).
+        </li>
+      </ul>
+    </section>
+
+    <section class="credits-section">
+      <h2>Game boxarts</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>libretro-thumbnails</strong> — <a href="https://github.com/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis" target="_blank" rel="noopener">github.com/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis</a>.
+          Boxart repository used in <code>data/boxarts.json</code>, preferring the Tec Toy/Brazil version, then USA/Europe/World, and lastly Japan.
+        </li>
+        <li>
+          <strong>jsdelivr</strong> — <a href="https://www.jsdelivr.com/" target="_blank" rel="noopener">jsdelivr.com</a>.
+          CDN used as the primary source for loading boxart images on demand.
+        </li>
+        <li>
+          <strong>thumbnails.libretro.com</strong> — <a href="https://thumbnails.libretro.com/" target="_blank" rel="noopener">thumbnails.libretro.com</a>.
+          Official libretro-thumbnails host, used as a fallback if jsdelivr fails.
+        </li>
+      </ul>
+    </section>
+
+    <section class="credits-section">
+      <h2>Source code</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>GitHub</strong> — <a href="https://github.com/adalbertofjr/lifebar-megadrive" target="_blank" rel="noopener">github.com/adalbertofjr/lifebar-megadrive</a>.
+          Open source project; contributions and suggestions are welcome.
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>LifeBar is a fan project, with no official ties to Sega. <a href="index.html">Back to catalog</a>.</p>
+  </footer>
+</body>
+</html>

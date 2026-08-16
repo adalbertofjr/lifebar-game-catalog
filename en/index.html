@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeBar — Game Catalog</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <a class="lang-toggle" href="../index.html" aria-label="Mudar para português">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    PT
+  </a>
+  <header class="app-header">
+    <h1 class="brand">
+      <img class="pixel-wordmark" src="../assets/lifebar-logo.svg" width="248" height="44" alt="LifeBar">
+    </h1>
+    <img class="life-gauge-bar" src="../assets/life-gauge.svg" width="248" height="44" alt="LifeBar">
+    <span class="platform-tag">Mega Drive</span>
+    <p class="subtitle">The LifeBar of the games that shaped your life</p>
+  </header>
+
+  <main>
+    <section class="stats" id="stats">
+      <div class="stat">
+        <span class="stat-value" id="stat-played">0</span>
+        <span class="stat-label">played</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat-total">0</span>
+        <span class="stat-label">total</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <input type="search" id="search" placeholder="Search by title, developer or publisher...">
+      <select id="filter-status">
+        <option value="all">All</option>
+        <option value="played">Played</option>
+        <option value="unplayed">Not played</option>
+      </select>
+      <select id="sort-by">
+        <option value="title">Sort: title</option>
+        <option value="year">Sort: year</option>
+        <option value="developer">Sort: developer</option>
+      </select>
+      <button id="export-btn" title="Generates the updated JSON of marked games, to paste into data/played.json">Export played.json</button>
+    </section>
+
+    <section id="export-panel" class="export-panel hidden">
+      <p>Copy the content below and save it to <code>data/played.json</code> to persist your markings in the repository.</p>
+      <textarea id="export-text" readonly></textarea>
+      <button id="close-export">Close</button>
+    </section>
+
+    <table class="game-table">
+      <thead>
+        <tr>
+          <th class="col-played">Played</th>
+          <th class="col-title">Title</th>
+          <th class="col-dev">Developer</th>
+          <th class="col-pub">Publisher</th>
+          <th class="col-year">Year</th>
+        </tr>
+      </thead>
+      <tbody id="game-list"></tbody>
+    </table>
+
+    <p id="empty-state" class="empty-state hidden">No games found.</p>
+  </main>
+
+  <footer class="app-footer">
+    <p>Markings are saved locally in your browser. Use "Export played.json" to persist them in the repository.</p>
+    <p><a href="credits.html">Credits and sources</a></p>
+  </footer>
+
+  <script>window.BASE_PATH = '../';</script>
+  <script src="../app.js"></script>
+</body>
+</html>

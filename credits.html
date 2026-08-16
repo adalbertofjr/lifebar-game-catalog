@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créditos — LifeBar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="lang-toggle" href="en/credits.html" aria-label="Switch to English">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    EN
+  </a>
+  <header class="app-header">
+    <h1 class="brand">
+      <img class="pixel-wordmark" src="assets/lifebar-logo.svg" width="248" height="44" alt="LifeBar">
+    </h1>
+    <span class="platform-tag">Créditos</span>
+    <p class="subtitle"><a href="index.html">&larr; Voltar ao catálogo</a></p>
+  </header>
+
+  <main>
+    <section class="credits-section">
+      <h2>Dados do catálogo</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>Lista de jogos licenciados</strong> — <a href="https://en.wikipedia.org/wiki/List_of_Sega_Genesis_games#Licensed_games" target="_blank" rel="noopener">Wikipedia, List of Sega Genesis games</a>.
+          Fonte dos 880 títulos (desenvolvedora, publicadora, datas de lançamento por região).
+        </li>
+      </ul>
+    </section>
+
+    <section class="credits-section">
+      <h2>Capas dos jogos</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>libretro-thumbnails</strong> — <a href="https://github.com/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis" target="_blank" rel="noopener">github.com/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis</a>.
+          Repositório de capas usado em <code>data/boxarts.json</code>, com precedência para a versão Tec Toy/Brasil, depois USA/Europe/World e por último Japão.
+        </li>
+        <li>
+          <strong>jsdelivr</strong> — <a href="https://www.jsdelivr.com/" target="_blank" rel="noopener">jsdelivr.com</a>.
+          CDN usada como fonte primária para carregar as imagens de capa sob demanda.
+        </li>
+        <li>
+          <strong>thumbnails.libretro.com</strong> — <a href="https://thumbnails.libretro.com/" target="_blank" rel="noopener">thumbnails.libretro.com</a>.
+          Host oficial do libretro-thumbnails, usado como fallback caso o jsdelivr falhe.
+        </li>
+      </ul>
+    </section>
+
+    <section class="credits-section">
+      <h2>Código-fonte</h2>
+      <ul class="credits-list">
+        <li>
+          <strong>GitHub</strong> — <a href="https://github.com/adalbertofjr/lifebar-megadrive" target="_blank" rel="noopener">github.com/adalbertofjr/lifebar-megadrive</a>.
+          Projeto open source; contribuições e sugestões são bem-vindas.
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>LifeBar é um projeto de fã, sem vínculo oficial com a Sega. <a href="index.html">Voltar ao catálogo</a>.</p>
+  </footer>
+</body>
+</html>
