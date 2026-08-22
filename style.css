@@ -219,6 +219,50 @@ main {
   color: var(--md-16bit-white);
 }
 
+.genre-filter {
+  position: relative;
+}
+
+.controls .genre-filter-btn {
+  cursor: pointer;
+  background: var(--bg-alt);
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 400;
+}
+
+.controls .genre-filter-btn:hover {
+  background: var(--bg-alt);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.genre-filter-menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 20;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+  min-width: 200px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.genre-filter-menu label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -378,6 +422,10 @@ main {
   text-align: center;
 }
 
+.col-genre {
+  width: 9rem;
+}
+
 .col-year {
   width: 4rem;
 }
@@ -482,7 +530,7 @@ tr.is-played .col-title {
 }
 
 @media (max-width: 640px) {
-  .col-dev, .col-pub { display: none; }
+  .col-dev, .col-pub, .col-genre { display: none; }
 }
 
 .game-detail {

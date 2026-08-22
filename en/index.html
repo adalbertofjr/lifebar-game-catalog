@@ -47,6 +47,10 @@
         <option value="year">Sort: year</option>
         <option value="developer">Sort: developer</option>
       </select>
+      <div class="genre-filter">
+        <button type="button" id="genre-filter-btn" class="genre-filter-btn" aria-haspopup="true" aria-expanded="false">Genre</button>
+        <div id="genre-filter-menu" class="genre-filter-menu hidden"></div>
+      </div>
       <button id="export-btn" class="icon-btn" title="Export played.json" aria-label="Export played.json">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
       </button>
@@ -101,6 +105,7 @@
           <th class="col-title">Title</th>
           <th class="col-dev">Developer</th>
           <th class="col-pub">Publisher</th>
+          <th class="col-genre">Genre</th>
           <th class="col-year">Year</th>
         </tr>
       </thead>

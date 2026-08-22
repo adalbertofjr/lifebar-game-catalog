@@ -8,6 +8,7 @@ const I18N = {
   importSuccess: IS_EN
     ? 'Markings imported successfully.'
     : 'Marcações importadas com sucesso.',
+  genreLabel: IS_EN ? 'Genre' : 'Gênero',
 };
 
 let games = [];
@@ -15,6 +16,7 @@ let basePlayed = {};
 let boxarts = {};
 let details = {};
 let overrides = loadOverrides();
+let selectedGenres = new Set();
 
 const els = {
   list: document.getElementById('game-list'),
@@ -47,6 +49,8 @@ const els = {
   randomSummary: document.getElementById('random-summary'),
   randomAgain: document.getElementById('random-again'),
   closeRandom: document.getElementById('close-random'),
+  genreFilterBtn: document.getElementById('genre-filter-btn'),
+  genreFilterMenu: document.getElementById('genre-filter-menu'),
 };
 
 function handleTogglePlayed(id) {
@@ -79,7 +83,55 @@ async function init() {
   els.randomAgain.addEventListener('click', drawRandom);
   els.closeRandom.addEventListener('click', () => els.randomPanel.classList.add('hidden'));
 
+  els.genreFilterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    els.genreFilterMenu.classList.toggle('hidden');
+  });
+  document.addEventListener('click', (e) => {
+    if (!els.genreFilterMenu.classList.contains('hidden')
+      && !els.genreFilterMenu.contains(e.target)
+      && e.target !== els.genreFilterBtn) {
+      els.genreFilterMenu.classList.add('hidden');
+    }
+  });
+
+  renderGenreMenu();
   render();
+}
+
+function buildGenreOptions() {
+  const set = new Set();
+  games.forEach((g) => {
+    const genre = details[g.id] && details[g.id].genre;
+    if (genre) set.add(genre);
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+function updateGenreButtonLabel() {
+  els.genreFilterBtn.textContent = selectedGenres.size > 0
+    ? `${I18N.genreLabel} (${selectedGenres.size})`
+    : I18N.genreLabel;
+}
+
+function renderGenreMenu() {
+  els.genreFilterMenu.innerHTML = '';
+  buildGenreOptions().forEach((genre) => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = genre;
+    checkbox.checked = selectedGenres.has(genre);
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) selectedGenres.add(genre);
+      else selectedGenres.delete(genre);
+      updateGenreButtonLabel();
+      render();
+    });
+    label.append(checkbox, document.createTextNode(genre));
+    els.genreFilterMenu.appendChild(label);
+  });
+  updateGenreButtonLabel();
 }
 
 function render() {
@@ -94,6 +146,10 @@ function render() {
     if (query) {
       const haystack = `${g.title} ${g.developer} ${g.publisher}`.toLowerCase();
       if (!haystack.includes(query)) return false;
+    }
+    if (selectedGenres.size > 0) {
+      const genre = details[g.id] && details[g.id].genre;
+      if (!genre || !selectedGenres.has(genre)) return false;
     }
     return true;
   });
@@ -145,11 +201,15 @@ function render() {
     tdPub.className = 'col-pub';
     tdPub.textContent = g.publisher;
 
+    const tdGenre = document.createElement('td');
+    tdGenre.className = 'col-genre';
+    tdGenre.textContent = (details[g.id] && details[g.id].genre) || '—';
+
     const tdYear = document.createElement('td');
     tdYear.className = 'col-year';
     tdYear.textContent = g.year || '—';
 
-    tr.append(tdPlayed, tdTitle, tdDev, tdPub, tdYear);
+    tr.append(tdPlayed, tdTitle, tdDev, tdPub, tdGenre, tdYear);
     els.list.appendChild(tr);
   });
 
