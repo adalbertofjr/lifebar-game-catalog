@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Game details — LifeBar</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <a class="lang-toggle" id="lang-toggle" href="../game.html" aria-label="Mudar para português">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    PT
+  </a>
+  <header class="app-header">
+    <h1 class="brand">
+      <img class="pixel-wordmark" src="../assets/lifebar-logo.svg" width="248" height="44" alt="LifeBar">
+    </h1>
+    <span class="platform-tag">Mega Drive</span>
+    <p class="subtitle"><a href="index.html">&larr; Back to catalog</a></p>
+  </header>
+
+  <main>
+    <section id="game-detail" class="game-detail hidden">
+      <div class="game-detail-cover">
+        <img id="detail-boxart" class="detail-boxart" alt="">
+      </div>
+      <div class="game-detail-info">
+        <h2 id="detail-title" class="game-detail-title"></h2>
+        <label class="detail-played-toggle">
+          <input type="checkbox" id="detail-played-checkbox">
+          <span>Played</span>
+        </label>
+        <dl class="game-detail-meta" id="detail-meta"></dl>
+        <p id="detail-summary" class="game-detail-summary"></p>
+      </div>
+    </section>
+
+    <p id="detail-not-found" class="empty-state hidden">Game not found. <a href="index.html">Back to catalog</a>.</p>
+  </main>
+
+  <footer class="app-footer">
+    <p><a href="index.html">Back to catalog</a></p>
+  </footer>
+
+  <script>window.BASE_PATH = '../';</script>
+  <script src="../common.js"></script>
+  <script src="../game.js"></script>
+</body>
+</html>

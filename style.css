@@ -85,8 +85,20 @@ body {
   font-size: 0.9rem;
 }
 
-.subtitle a { color: var(--accent); }
-.subtitle a:hover { color: var(--accent-active); }
+/* plain accent-colored link, reused by any prose/caption area (footer, empty states, credits list) */
+.subtitle a,
+.app-footer a,
+.empty-state a,
+.credits-list a {
+  color: var(--accent);
+}
+
+.subtitle a:hover,
+.app-footer a:hover,
+.empty-state a:hover,
+.credits-list a:hover {
+  color: var(--accent-active);
+}
 
 .lang-toggle {
   position: fixed;
@@ -207,6 +219,20 @@ main {
   color: var(--md-16bit-white);
 }
 
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem !important;
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.icon-btn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 .export-panel {
   background: var(--bg-alt);
   border: 1px solid var(--border);
@@ -238,7 +264,84 @@ main {
   border-radius: var(--radius);
 }
 
+.export-panel input[type="file"] {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.import-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.import-message {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+.import-message.success { color: var(--accent, #2e7d32); }
+
+.import-message.error { color: #c0392b; }
+
 .hidden { display: none !important; }
+
+.random-result {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.random-boxart-wrap {
+  flex: none;
+  width: 96px;
+  height: 132px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.random-boxart-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.random-boxart-wrap.no-boxart img {
+  object-fit: contain;
+  padding: 0.5rem;
+}
+
+.random-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.random-info .title-link {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.random-devpub {
+  color: var(--text-muted, var(--text));
+  opacity: 0.8;
+}
+
+.random-genre {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.random-summary {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
 
 .game-table {
   width: 100%;
@@ -311,6 +414,16 @@ tr.is-played .col-title {
   padding: 3px;
 }
 
+.title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.title-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
 .empty-state {
   text-align: center;
   color: var(--text-dim);
@@ -324,8 +437,6 @@ tr.is-played .col-title {
   font-size: 0.8rem;
 }
 
-.app-footer a { color: var(--accent); }
-.app-footer a:hover { color: var(--accent-active); }
 .app-footer p + p { margin-top: 0.4rem; }
 
 .credits-section {
@@ -364,14 +475,6 @@ tr.is-played .col-title {
   color: var(--text);
 }
 
-.credits-list a {
-  color: var(--accent);
-}
-
-.credits-list a:hover {
-  color: var(--accent-active);
-}
-
 .credits-list code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.85em;
@@ -380,4 +483,96 @@ tr.is-played .col-title {
 
 @media (max-width: 640px) {
   .col-dev, .col-pub { display: none; }
+}
+
+.game-detail {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.game-detail-cover {
+  flex: 0 0 220px;
+}
+
+.detail-boxart {
+  width: 220px;
+  height: 302px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  display: block;
+}
+
+.no-boxart .detail-boxart {
+  object-fit: contain;
+  padding: 1.5rem;
+}
+
+.game-detail-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-detail-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+}
+
+.detail-played-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.detail-played-toggle input {
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: var(--played);
+}
+
+.game-detail-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+}
+
+.game-detail-meta dt {
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding-top: 0.15rem;
+}
+
+.game-detail-meta dd {
+  margin: 0;
+}
+
+.game-detail-meta code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  color: var(--text-dim);
+}
+
+.game-detail-summary {
+  line-height: 1.6;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .game-detail {
+    flex-direction: column;
+    align-items: center;
+  }
+  .game-detail-info {
+    width: 100%;
+  }
 }

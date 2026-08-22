@@ -1,19 +1,19 @@
-const STORAGE_KEY = 'md-played-overrides';
-// set by localized pages (e.g. en/index.html) to reach data/ and assets/ at the site root
-const BASE_PATH = window.BASE_PATH || '';
-// jsdelivr mirrors the libretro-thumbnails GitHub repo through a real CDN (fast once warm,
-// meant for hotlinking); thumbnails.libretro.com is the official host, used as fallback
-// if jsdelivr ever fails to resolve a file.
-const BOXART_SOURCES = [
-  'https://cdn.jsdelivr.net/gh/libretro-thumbnails/Sega_-_Mega_Drive_-_Genesis@master/Named_Boxarts/',
-  'https://thumbnails.libretro.com/Sega%20-%20Mega%20Drive%20-%20Genesis/Named_Boxarts/',
-];
-// generic cartridge icon, used when a title has no boxart mapping or the mapped image fails to load
-const BOXART_PLACEHOLDER = `${BASE_PATH}assets/boxart-placeholder.svg`;
+const I18N = {
+  invalidJson: IS_EN
+    ? 'Invalid JSON. Check the pasted content or the selected file.'
+    : 'JSON inválido. Verifique o conteúdo colado ou o arquivo selecionado.',
+  invalidFormat: IS_EN
+    ? 'Invalid format: expected an object in the played.json format.'
+    : 'Formato inválido: esperado um objeto no formato de played.json.',
+  importSuccess: IS_EN
+    ? 'Markings imported successfully.'
+    : 'Marcações importadas com sucesso.',
+};
 
 let games = [];
 let basePlayed = {};
 let boxarts = {};
+let details = {};
 let overrides = loadOverrides();
 
 const els = {
@@ -29,49 +29,55 @@ const els = {
   exportPanel: document.getElementById('export-panel'),
   exportText: document.getElementById('export-text'),
   closeExport: document.getElementById('close-export'),
+  importBtn: document.getElementById('import-btn'),
+  importPanel: document.getElementById('import-panel'),
+  importText: document.getElementById('import-text'),
+  importFile: document.getElementById('import-file'),
+  applyImport: document.getElementById('apply-import'),
+  closeImport: document.getElementById('close-import'),
+  importMessage: document.getElementById('import-message'),
+  randomBtn: document.getElementById('random-btn'),
+  randomPanel: document.getElementById('random-panel'),
+  randomEmpty: document.getElementById('random-empty'),
+  randomResult: document.getElementById('random-result'),
+  randomBoxart: document.getElementById('random-boxart'),
+  randomTitle: document.getElementById('random-title'),
+  randomDevPub: document.getElementById('random-devpub'),
+  randomGenre: document.getElementById('random-genre'),
+  randomSummary: document.getElementById('random-summary'),
+  randomAgain: document.getElementById('random-again'),
+  closeRandom: document.getElementById('close-random'),
 };
 
-function loadOverrides() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  } catch {
-    return {};
-  }
-}
-
-function saveOverrides() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
-}
-
-function isPlayed(id) {
-  if (Object.prototype.hasOwnProperty.call(overrides, id)) {
-    return !!overrides[id].played;
-  }
-  return !!(basePlayed[id] && basePlayed[id].played);
-}
-
-function togglePlayed(id) {
-  const current = isPlayed(id);
-  overrides[id] = { played: !current, dateAdded: new Date().toISOString().slice(0, 10) };
-  saveOverrides();
+function handleTogglePlayed(id) {
+  togglePlayed(id, overrides, basePlayed);
   render();
 }
 
 async function init() {
-  const [gamesRes, playedRes, boxartsRes] = await Promise.all([
+  const [gamesRes, playedRes, boxartsRes, detailsRes] = await Promise.all([
     fetch(`${BASE_PATH}data/games.json`),
     fetch(`${BASE_PATH}data/played.json`),
     fetch(`${BASE_PATH}data/boxarts.json`),
+    fetch(`${BASE_PATH}data/details.json`),
   ]);
   games = await gamesRes.json();
   basePlayed = await playedRes.json();
   boxarts = await boxartsRes.json();
+  details = await detailsRes.json();
 
   els.search.addEventListener('input', render);
   els.filterStatus.addEventListener('change', render);
   els.sortBy.addEventListener('change', render);
   els.exportBtn.addEventListener('click', showExport);
   els.closeExport.addEventListener('click', () => els.exportPanel.classList.add('hidden'));
+  els.importBtn.addEventListener('click', showImport);
+  els.closeImport.addEventListener('click', () => els.importPanel.classList.add('hidden'));
+  els.importFile.addEventListener('change', handleImportFile);
+  els.applyImport.addEventListener('click', applyImportedData);
+  els.randomBtn.addEventListener('click', showRandom);
+  els.randomAgain.addEventListener('click', drawRandom);
+  els.closeRandom.addEventListener('click', () => els.randomPanel.classList.add('hidden'));
 
   render();
 }
@@ -82,7 +88,7 @@ function render() {
   const sortBy = els.sortBy.value;
 
   let filtered = games.filter((g) => {
-    const played = isPlayed(g.id);
+    const played = isPlayed(g.id, overrides, basePlayed);
     if (status === 'played' && !played) return false;
     if (status === 'unplayed' && played) return false;
     if (query) {
@@ -100,7 +106,7 @@ function render() {
 
   els.list.innerHTML = '';
   filtered.forEach((g) => {
-    const played = isPlayed(g.id);
+    const played = isPlayed(g.id, overrides, basePlayed);
     const tr = document.createElement('tr');
     tr.className = played ? 'is-played' : '';
 
@@ -121,25 +127,11 @@ function render() {
     img.width = 32;
     img.height = 44;
     img.alt = '';
-    const boxartFile = boxarts[g.id];
-    if (boxartFile) {
-      let sourceIndex = 0;
-      img.src = BOXART_SOURCES[sourceIndex] + encodeURIComponent(boxartFile);
-      img.addEventListener('error', () => {
-        sourceIndex += 1;
-        if (sourceIndex < BOXART_SOURCES.length) {
-          img.src = BOXART_SOURCES[sourceIndex] + encodeURIComponent(boxartFile);
-        } else {
-          img.src = BOXART_PLACEHOLDER;
-          wrap.classList.add('no-boxart');
-        }
-      });
-    } else {
-      img.src = BOXART_PLACEHOLDER;
-      wrap.classList.add('no-boxart');
-    }
+    setBoxartImage(img, wrap, boxarts[g.id]);
 
-    const titleText = document.createElement('span');
+    const titleText = document.createElement('a');
+    titleText.className = 'title-link';
+    titleText.href = `game.html?id=${encodeURIComponent(g.id)}`;
     titleText.textContent = g.title;
 
     wrap.append(img, titleText);
@@ -162,12 +154,12 @@ function render() {
   });
 
   els.list.querySelectorAll('.played-checkbox').forEach((cb) => {
-    cb.addEventListener('change', (e) => togglePlayed(e.target.dataset.id));
+    cb.addEventListener('change', (e) => handleTogglePlayed(e.target.dataset.id));
   });
 
   els.emptyState.classList.toggle('hidden', filtered.length > 0);
 
-  const totalPlayed = games.filter((g) => isPlayed(g.id)).length;
+  const totalPlayed = games.filter((g) => isPlayed(g.id, overrides, basePlayed)).length;
   els.statPlayed.textContent = totalPlayed;
   els.statTotal.textContent = games.length;
   els.progressFill.style.width = `${games.length ? (totalPlayed / games.length) * 100 : 0}%`;
@@ -185,6 +177,95 @@ function showExport() {
   const ordered = Object.fromEntries(Object.keys(merged).sort().map((k) => [k, merged[k]]));
   els.exportText.value = JSON.stringify(ordered, null, 2);
   els.exportPanel.classList.remove('hidden');
+}
+
+function showImport() {
+  els.importMessage.classList.add('hidden');
+  els.importPanel.classList.remove('hidden');
+}
+
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    els.importText.value = reader.result;
+  };
+  reader.readAsText(file);
+}
+
+function showImportMessage(text, isError) {
+  els.importMessage.textContent = text;
+  els.importMessage.classList.remove('hidden', 'success', 'error');
+  els.importMessage.classList.add(isError ? 'error' : 'success');
+}
+
+function applyImportedData() {
+  let data;
+  try {
+    data = JSON.parse(els.importText.value);
+  } catch {
+    showImportMessage(I18N.invalidJson, true);
+    return;
+  }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    showImportMessage(I18N.invalidFormat, true);
+    return;
+  }
+
+  const newOverrides = {};
+  games.forEach((g) => {
+    const id = g.id;
+    const importedPlayed = !!(data[id] && data[id].played);
+    const basePlayedFlag = !!(basePlayed[id] && basePlayed[id].played);
+    if (importedPlayed !== basePlayedFlag) {
+      newOverrides[id] = {
+        played: importedPlayed,
+        dateAdded: (data[id] && data[id].dateAdded) || (overrides[id] && overrides[id].dateAdded) || new Date().toISOString().slice(0, 10),
+      };
+    }
+  });
+
+  overrides = newOverrides;
+  saveOverrides(overrides);
+  render();
+  showImportMessage(I18N.importSuccess, false);
+}
+
+function drawRandom() {
+  const candidates = games.filter((g) => !isPlayed(g.id, overrides, basePlayed));
+
+  if (candidates.length === 0) {
+    els.randomEmpty.classList.remove('hidden');
+    els.randomResult.classList.add('hidden');
+    return;
+  }
+
+  const game = candidates[Math.floor(Math.random() * candidates.length)];
+  const detail = details[game.id] || {};
+
+  els.randomEmpty.classList.add('hidden');
+  els.randomResult.classList.remove('hidden');
+
+  els.randomBoxart.alt = game.title;
+  els.randomBoxart.parentElement.classList.remove('no-boxart');
+  setBoxartImage(els.randomBoxart, els.randomBoxart.parentElement, boxarts[game.id]);
+
+  els.randomTitle.textContent = game.title;
+  els.randomTitle.href = `game.html?id=${encodeURIComponent(game.id)}`;
+
+  els.randomDevPub.textContent = [game.developer, game.publisher].filter(Boolean).join(' · ');
+
+  els.randomGenre.textContent = detail.genre || '';
+  els.randomGenre.classList.toggle('hidden', !detail.genre);
+
+  els.randomSummary.textContent = detail.summary || '';
+  els.randomSummary.classList.toggle('hidden', !detail.summary);
+}
+
+function showRandom() {
+  drawRandom();
+  els.randomPanel.classList.remove('hidden');
 }
 
 init();

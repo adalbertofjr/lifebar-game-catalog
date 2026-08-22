@@ -6,6 +6,8 @@ A licença AGPL-3.0 deste repositório ([`LICENSE`](LICENSE)) cobre apenas o **c
 
 - `data/games.json` é derivado da tabela ["List of Sega Genesis games — Licensed games"](https://en.wikipedia.org/wiki/List_of_Sega_Genesis_games#Licensed_games), da Wikipedia, disponível sob [CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/). Os dados factuais em si (títulos, desenvolvedoras, publicadoras, datas) não são protegidos por direitos autorais.
 - `data/played.json` é gerado pelo próprio usuário do site (marcações locais); não contém conteúdo de terceiros.
+- `data/details.json` (gênero, franquia, número de jogadores, classificação etária, serial) é extraído do [libretro-database](https://github.com/libretro/libretro-database) (rdb `Sega - Mega Drive - Genesis.rdb`), disponível sob [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), via `tools/extract_rdb_details.py`. Os dados factuais em si não são protegidos por direitos autorais.
+- O campo `summary` (sinopse) de `data/details.json`, quando presente, vem da [IGDB](https://www.igdb.com/), via `tools/extract_igdb_details.py`. Dados fornecidos pela IGDB.com, sem afiliação ou endosso oficial deste projeto pela IGDB/Twitch.
 
 ## Capas dos jogos
 

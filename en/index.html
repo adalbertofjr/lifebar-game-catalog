@@ -47,13 +47,51 @@
         <option value="year">Sort: year</option>
         <option value="developer">Sort: developer</option>
       </select>
-      <button id="export-btn" title="Generates the updated JSON of marked games, to paste into data/played.json">Export played.json</button>
+      <button id="export-btn" class="icon-btn" title="Export played.json" aria-label="Export played.json">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+      </button>
+      <button id="import-btn" class="icon-btn" title="Import played.json" aria-label="Import played.json">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M4 21h16"/></svg>
+      </button>
+      <button id="random-btn" class="icon-btn" title="Draw a game to play" aria-label="Draw a game to play">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
+      </button>
     </section>
 
     <section id="export-panel" class="export-panel hidden">
       <p>Copy the content below and save it to <code>data/played.json</code> to persist your markings in the repository.</p>
       <textarea id="export-text" readonly></textarea>
       <button id="close-export">Close</button>
+    </section>
+
+    <section id="import-panel" class="export-panel hidden">
+      <p>Select a <code>played.json</code> file or paste its content below, then click "Apply" to restore your markings in this browser.</p>
+      <input type="file" id="import-file" accept="application/json,.json">
+      <textarea id="import-text" placeholder='{"game-id": {"played": true, "dateAdded": "2024-01-01"}}'></textarea>
+      <div class="import-actions">
+        <button id="apply-import">Apply</button>
+        <button id="close-import">Close</button>
+      </div>
+      <p id="import-message" class="import-message hidden"></p>
+    </section>
+
+    <section id="random-panel" class="export-panel random-panel hidden">
+      <p id="random-empty" class="hidden">All games are already marked as played — there's no suggestion to draw.</p>
+      <div id="random-result" class="random-result hidden">
+        <div class="random-boxart-wrap">
+          <img id="random-boxart" class="boxart" alt="">
+        </div>
+        <div class="random-info">
+          <a id="random-title" class="title-link" href="#"></a>
+          <p id="random-devpub" class="random-devpub"></p>
+          <p id="random-genre" class="random-genre hidden"></p>
+          <p id="random-summary" class="random-summary hidden"></p>
+        </div>
+      </div>
+      <div class="import-actions">
+        <button id="random-again">Draw again</button>
+        <button id="close-random">Close</button>
+      </div>
     </section>
 
     <table class="game-table">
@@ -73,11 +111,12 @@
   </main>
 
   <footer class="app-footer">
-    <p>Markings are saved locally in your browser. Use "Export played.json" to persist them in the repository.</p>
+    <p>Markings are saved locally in your browser. Use "Export played.json" to persist them in the repository, or "Import played.json" to restore them.</p>
     <p><a href="credits.html">Credits and sources</a></p>
   </footer>
 
   <script>window.BASE_PATH = '../';</script>
+  <script src="../common.js"></script>
   <script src="../app.js"></script>
 </body>
 </html>
