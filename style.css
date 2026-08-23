@@ -24,6 +24,7 @@
   --accent: var(--md-sega-silver);
   --accent-active: var(--md-btn-red);
   --played: var(--md-sega-silver);
+  --finished: var(--tectoy-gold);
   --radius: 8px;
 }
 
@@ -83,6 +84,24 @@ body {
   margin: 0;
   color: var(--text-dim);
   font-size: 0.9rem;
+}
+
+.tectoy-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.game-detail-title .tectoy-badge {
+  margin-left: 0.5rem;
 }
 
 /* plain accent-colored link, reused by any prose/caption area (footer, empty states, credits list) */
@@ -422,6 +441,38 @@ main {
   text-align: center;
 }
 
+.col-favorite {
+  width: 3rem;
+  text-align: center;
+}
+
+.favorite-btn,
+.played-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.favorite-btn svg,
+.played-btn svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.favorite-btn.is-favorite {
+  color: var(--accent-active);
+}
+
+.favorite-btn.is-favorite svg {
+  fill: currentColor;
+}
+
 .col-genre {
   width: 9rem;
 }
@@ -430,15 +481,39 @@ main {
   width: 4rem;
 }
 
-.played-checkbox {
-  width: 1.1rem;
-  height: 1.1rem;
-  cursor: pointer;
-  accent-color: var(--played);
+.played-btn .check-1,
+.played-btn .check-2 {
+  opacity: 0;
+}
+
+.played-btn.is-played .ring,
+.played-btn.is-finished .ring {
+  opacity: 0;
+}
+
+.played-btn.is-played .check-1 {
+  opacity: 1;
+}
+
+.played-btn.is-finished .check-1,
+.played-btn.is-finished .check-2 {
+  opacity: 1;
+}
+
+.played-btn.is-played {
+  color: var(--played);
+}
+
+.played-btn.is-finished {
+  color: var(--finished);
 }
 
 tr.is-played .col-title {
   color: var(--played);
+}
+
+tr.is-finished .col-title {
+  color: var(--finished);
 }
 
 .title-cell {
@@ -568,20 +643,17 @@ tr.is-played .col-title {
   font-size: 1.5rem;
 }
 
-.detail-played-toggle {
-  display: inline-flex;
+.detail-toggles {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-bottom: 1.25rem;
-  cursor: pointer;
-  font-size: 0.95rem;
 }
 
-.detail-played-toggle input {
-  width: 1.2rem;
-  height: 1.2rem;
-  cursor: pointer;
-  accent-color: var(--played);
+.detail-toggles .favorite-btn svg,
+.detail-toggles .played-btn svg {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .game-detail-meta {

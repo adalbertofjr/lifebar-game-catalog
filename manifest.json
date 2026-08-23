@@ -1,0 +1,14 @@
+{
+  "name": "LifeBar — Game Catalog",
+  "short_name": "LifeBar",
+  "description": "Catálogo pessoal de jogos para acompanhar quais já joguei.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -14,16 +14,30 @@ const I18N = {
   summaryUnavailable: IS_EN
     ? 'No summary available yet for this game.'
     : 'Ainda não há sinopse disponível para este jogo.',
+  tectoyBadge: 'TecToy',
+  tectoyTitle: IS_EN ? 'Released by TecToy in Brazil' : 'Lançado pela TecToy no Brasil',
+  favoriteLabel: IS_EN ? 'Favorite' : 'Favorito',
+  statusUnplayed: IS_EN ? 'Not played' : 'Não jogado',
+  statusPlayed: IS_EN ? 'Played' : 'Jogado',
+  statusFinished: IS_EN ? 'Finished' : 'Finalizado',
+};
+
+const STATUS_LABELS = {
+  unplayed: I18N.statusUnplayed,
+  played: I18N.statusPlayed,
+  finished: I18N.statusFinished,
 };
 
 let overrides = loadOverrides();
+let favorites = loadFavorites();
 
 const els = {
   detail: document.getElementById('game-detail'),
   notFound: document.getElementById('detail-not-found'),
   boxart: document.getElementById('detail-boxart'),
   title: document.getElementById('detail-title'),
-  playedCheckbox: document.getElementById('detail-played-checkbox'),
+  playedBtn: document.getElementById('detail-played-btn'),
+  favoriteBtn: document.getElementById('detail-favorite-btn'),
   meta: document.getElementById('detail-meta'),
   summary: document.getElementById('detail-summary'),
   langToggle: document.getElementById('lang-toggle'),
@@ -49,11 +63,12 @@ async function init() {
   const id = new URLSearchParams(window.location.search).get('id');
   els.langToggle.href = `${els.langToggle.getAttribute('href')}?id=${encodeURIComponent(id)}`;
 
-  const [games, basePlayed, boxarts, details] = await Promise.all([
+  const [games, basePlayed, boxarts, details, tectoy] = await Promise.all([
     fetch(`${BASE_PATH}data/games.json`).then((r) => r.json()),
     fetch(`${BASE_PATH}data/played.json`).then((r) => r.json()),
     fetch(`${BASE_PATH}data/boxarts.json`).then((r) => r.json()),
     fetch(`${BASE_PATH}data/details.json`).then((r) => r.json()),
+    fetch(`${BASE_PATH}data/tectoy.json`).then((r) => r.json()),
   ]);
 
   const game = games.find((g) => g.id === id);
@@ -65,18 +80,42 @@ async function init() {
   els.pageTitle.textContent = `${game.title} — LifeBar`;
   els.title.textContent = game.title;
 
+  if (tectoy[id] && tectoy[id].lancado) {
+    const badge = document.createElement('span');
+    badge.className = 'tectoy-badge';
+    badge.title = I18N.tectoyTitle;
+    badge.textContent = I18N.tectoyBadge;
+    els.title.appendChild(badge);
+  }
+
   els.boxart.alt = game.title;
   setBoxartImage(els.boxart, els.boxart.parentElement, boxarts[id]);
 
   const detail = details[id] || {};
 
-  function refreshPlayedCheckbox() {
-    els.playedCheckbox.checked = isPlayed(id, overrides, basePlayed);
+  function refreshPlayedControl() {
+    const state = getStatus(id, overrides, basePlayed);
+    els.playedBtn.className = `played-btn detail-played-btn is-${state}`;
+    els.playedBtn.title = STATUS_LABELS[state];
+    els.playedBtn.setAttribute('aria-label', STATUS_LABELS[state]);
   }
-  refreshPlayedCheckbox();
-  els.playedCheckbox.addEventListener('change', () => {
-    togglePlayed(id, overrides, basePlayed);
-    refreshPlayedCheckbox();
+  refreshPlayedControl();
+  els.playedBtn.addEventListener('click', () => {
+    cycleStatus(id, overrides, basePlayed);
+    refreshPlayedControl();
+  });
+
+  els.favoriteBtn.title = I18N.favoriteLabel;
+  els.favoriteBtn.setAttribute('aria-label', I18N.favoriteLabel);
+  function refreshFavoriteBtn() {
+    const favorite = isFavorite(id, favorites);
+    els.favoriteBtn.classList.toggle('is-favorite', favorite);
+    els.favoriteBtn.setAttribute('aria-pressed', favorite);
+  }
+  refreshFavoriteBtn();
+  els.favoriteBtn.addEventListener('click', () => {
+    toggleFavorite(id, favorites);
+    refreshFavoriteBtn();
   });
 
   addMetaRow(els.meta, I18N.developer, game.developer);

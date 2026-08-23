@@ -1,4 +1,4 @@
 {
-  "streets-of-rage": { "played": true, "dateAdded": "2026-08-16" },
-  "vapor-trail": { "played": true, "dateAdded": "2026-08-16" }
+  "streets-of-rage": { "status": "finished", "dateAdded": "2026-08-16" },
+  "vapor-trail": { "status": "finished", "dateAdded": "2026-08-16" }
 }

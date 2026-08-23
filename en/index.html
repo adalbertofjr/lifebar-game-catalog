@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LifeBar — Game Catalog</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -40,7 +43,13 @@
       <select id="filter-status">
         <option value="all">All</option>
         <option value="played">Played</option>
+        <option value="finished">Finished</option>
         <option value="unplayed">Not played</option>
+      </select>
+      <select id="filter-favorite">
+        <option value="all">Favorites: all</option>
+        <option value="favorite">Favorites</option>
+        <option value="not-favorite">Not favorites</option>
       </select>
       <select id="sort-by">
         <option value="title">Sort: title</option>
@@ -71,7 +80,7 @@
     <section id="import-panel" class="export-panel hidden">
       <p>Select a <code>played.json</code> file or paste its content below, then click "Apply" to restore your markings in this browser.</p>
       <input type="file" id="import-file" accept="application/json,.json">
-      <textarea id="import-text" placeholder='{"game-id": {"played": true, "dateAdded": "2024-01-01"}}'></textarea>
+      <textarea id="import-text" placeholder='{"game-id": {"status": "finished", "dateAdded": "2024-01-01"}}'></textarea>
       <div class="import-actions">
         <button id="apply-import">Apply</button>
         <button id="close-import">Close</button>
@@ -102,6 +111,7 @@
       <thead>
         <tr>
           <th class="col-played">Played</th>
+          <th class="col-favorite">Favorite</th>
           <th class="col-title">Title</th>
           <th class="col-dev">Developer</th>
           <th class="col-pub">Publisher</th>

@@ -9,19 +9,34 @@ const I18N = {
     ? 'Markings imported successfully.'
     : 'Marcações importadas com sucesso.',
   genreLabel: IS_EN ? 'Genre' : 'Gênero',
+  tectoyBadge: 'TecToy',
+  tectoyTitle: IS_EN ? 'Released by TecToy in Brazil' : 'Lançado pela TecToy no Brasil',
+  favoriteLabel: IS_EN ? 'Favorite' : 'Favorito',
+  statusUnplayed: IS_EN ? 'Not played' : 'Não jogado',
+  statusPlayed: IS_EN ? 'Played' : 'Jogado',
+  statusFinished: IS_EN ? 'Finished' : 'Finalizado',
+};
+
+const STATUS_LABELS = {
+  unplayed: I18N.statusUnplayed,
+  played: I18N.statusPlayed,
+  finished: I18N.statusFinished,
 };
 
 let games = [];
 let basePlayed = {};
 let boxarts = {};
 let details = {};
+let tectoy = {};
 let overrides = loadOverrides();
+let favorites = loadFavorites();
 let selectedGenres = new Set();
 
 const els = {
   list: document.getElementById('game-list'),
   search: document.getElementById('search'),
   filterStatus: document.getElementById('filter-status'),
+  filterFavorite: document.getElementById('filter-favorite'),
   sortBy: document.getElementById('sort-by'),
   statPlayed: document.getElementById('stat-played'),
   statTotal: document.getElementById('stat-total'),
@@ -53,25 +68,41 @@ const els = {
   genreFilterMenu: document.getElementById('genre-filter-menu'),
 };
 
-function handleTogglePlayed(id) {
-  togglePlayed(id, overrides, basePlayed);
+function handleCycleStatus(id) {
+  cycleStatus(id, overrides, basePlayed);
+  render();
+}
+
+function playedButtonHtml(id, state) {
+  return `<button type="button" class="played-btn is-${state}" data-id="${id}" title="${STATUS_LABELS[state]}" aria-label="${STATUS_LABELS[state]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle class="ring" cx="12" cy="12" r="9"/><path class="check-1" d="M7.5 12.5l3 3 6-6.5"/><path class="check-2" d="M11.5 12.5l3 3 6-6.5"/></svg></button>`;
+}
+
+function favoriteButtonHtml(id, favorite) {
+  return `<button type="button" class="favorite-btn${favorite ? ' is-favorite' : ''}" aria-pressed="${favorite}" data-id="${id}" title="${I18N.favoriteLabel}" aria-label="${I18N.favoriteLabel}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>`;
+}
+
+function handleToggleFavorite(id) {
+  toggleFavorite(id, favorites);
   render();
 }
 
 async function init() {
-  const [gamesRes, playedRes, boxartsRes, detailsRes] = await Promise.all([
+  const [gamesRes, playedRes, boxartsRes, detailsRes, tectoyRes] = await Promise.all([
     fetch(`${BASE_PATH}data/games.json`),
     fetch(`${BASE_PATH}data/played.json`),
     fetch(`${BASE_PATH}data/boxarts.json`),
     fetch(`${BASE_PATH}data/details.json`),
+    fetch(`${BASE_PATH}data/tectoy.json`),
   ]);
   games = await gamesRes.json();
   basePlayed = await playedRes.json();
   boxarts = await boxartsRes.json();
   details = await detailsRes.json();
+  tectoy = await tectoyRes.json();
 
   els.search.addEventListener('input', render);
   els.filterStatus.addEventListener('change', render);
+  els.filterFavorite.addEventListener('change', render);
   els.sortBy.addEventListener('change', render);
   els.exportBtn.addEventListener('click', showExport);
   els.closeExport.addEventListener('click', () => els.exportPanel.classList.add('hidden'));
@@ -136,13 +167,14 @@ function renderGenreMenu() {
 
 function render() {
   const query = els.search.value.trim().toLowerCase();
-  const status = els.filterStatus.value;
+  const filterValue = els.filterStatus.value;
+  const favoriteFilter = els.filterFavorite.value;
   const sortBy = els.sortBy.value;
 
   let filtered = games.filter((g) => {
-    const played = isPlayed(g.id, overrides, basePlayed);
-    if (status === 'played' && !played) return false;
-    if (status === 'unplayed' && played) return false;
+    if (filterValue !== 'all' && getStatus(g.id, overrides, basePlayed) !== filterValue) return false;
+    if (favoriteFilter === 'favorite' && !isFavorite(g.id, favorites)) return false;
+    if (favoriteFilter === 'not-favorite' && isFavorite(g.id, favorites)) return false;
     if (query) {
       const haystack = `${g.title} ${g.developer} ${g.publisher}`.toLowerCase();
       if (!haystack.includes(query)) return false;
@@ -162,13 +194,18 @@ function render() {
 
   els.list.innerHTML = '';
   filtered.forEach((g) => {
-    const played = isPlayed(g.id, overrides, basePlayed);
+    const playState = getStatus(g.id, overrides, basePlayed);
     const tr = document.createElement('tr');
-    tr.className = played ? 'is-played' : '';
+    tr.className = playState !== 'unplayed' ? `is-${playState}` : '';
 
     const tdPlayed = document.createElement('td');
     tdPlayed.className = 'col-played';
-    tdPlayed.innerHTML = `<input type="checkbox" class="played-checkbox" ${played ? 'checked' : ''} data-id="${g.id}">`;
+    tdPlayed.innerHTML = playedButtonHtml(g.id, playState);
+
+    const favorite = isFavorite(g.id, favorites);
+    const tdFavorite = document.createElement('td');
+    tdFavorite.className = 'col-favorite';
+    tdFavorite.innerHTML = favoriteButtonHtml(g.id, favorite);
 
     const tdTitle = document.createElement('td');
     tdTitle.className = 'col-title';
@@ -191,6 +228,13 @@ function render() {
     titleText.textContent = g.title;
 
     wrap.append(img, titleText);
+    if (tectoy[g.id] && tectoy[g.id].lancado) {
+      const badge = document.createElement('span');
+      badge.className = 'tectoy-badge';
+      badge.title = I18N.tectoyTitle;
+      badge.textContent = I18N.tectoyBadge;
+      wrap.appendChild(badge);
+    }
     tdTitle.appendChild(wrap);
 
     const tdDev = document.createElement('td');
@@ -209,12 +253,16 @@ function render() {
     tdYear.className = 'col-year';
     tdYear.textContent = g.year || '—';
 
-    tr.append(tdPlayed, tdTitle, tdDev, tdPub, tdGenre, tdYear);
+    tr.append(tdPlayed, tdFavorite, tdTitle, tdDev, tdPub, tdGenre, tdYear);
     els.list.appendChild(tr);
   });
 
-  els.list.querySelectorAll('.played-checkbox').forEach((cb) => {
-    cb.addEventListener('change', (e) => handleTogglePlayed(e.target.dataset.id));
+  els.list.querySelectorAll('.played-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => handleCycleStatus(e.currentTarget.dataset.id));
+  });
+
+  els.list.querySelectorAll('.favorite-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => handleToggleFavorite(e.currentTarget.dataset.id));
   });
 
   els.emptyState.classList.toggle('hidden', filtered.length > 0);
@@ -226,14 +274,13 @@ function render() {
 }
 
 function showExport() {
-  const merged = { ...basePlayed };
-  for (const [id, val] of Object.entries(overrides)) {
-    if (val.played) {
-      merged[id] = { played: true, dateAdded: val.dateAdded || (merged[id] && merged[id].dateAdded) || '' };
-    } else {
-      delete merged[id];
-    }
-  }
+  const merged = {};
+  games.forEach((g) => {
+    const status = getStatus(g.id, overrides, basePlayed);
+    if (status === 'unplayed') return;
+    const dateAdded = (overrides[g.id] && overrides[g.id].dateAdded) || (basePlayed[g.id] && basePlayed[g.id].dateAdded) || '';
+    merged[g.id] = { status, dateAdded };
+  });
   const ordered = Object.fromEntries(Object.keys(merged).sort().map((k) => [k, merged[k]]));
   els.exportText.value = JSON.stringify(ordered, null, 2);
   els.exportPanel.classList.remove('hidden');
@@ -276,11 +323,11 @@ function applyImportedData() {
   const newOverrides = {};
   games.forEach((g) => {
     const id = g.id;
-    const importedPlayed = !!(data[id] && data[id].played);
-    const basePlayedFlag = !!(basePlayed[id] && basePlayed[id].played);
-    if (importedPlayed !== basePlayedFlag) {
+    const importedStatus = readStatus(data[id]);
+    const baseStatus = readStatus(basePlayed[id]);
+    if (importedStatus !== baseStatus) {
       newOverrides[id] = {
-        played: importedPlayed,
+        status: importedStatus,
         dateAdded: (data[id] && data[id].dateAdded) || (overrides[id] && overrides[id].dateAdded) || new Date().toISOString().slice(0, 10),
       };
     }
