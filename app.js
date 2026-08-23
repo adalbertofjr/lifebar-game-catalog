@@ -1,10 +1,13 @@
 const I18N = {
   invalidJson: IS_EN
-    ? 'Invalid JSON. Check the pasted content or the selected file.'
-    : 'JSON inválido. Verifique o conteúdo colado ou o arquivo selecionado.',
+    ? 'Invalid JSON. Check the selected file.'
+    : 'JSON inválido. Verifique o arquivo selecionado.',
   invalidFormat: IS_EN
     ? 'Invalid format: expected an object in the played.json format.'
     : 'Formato inválido: esperado um objeto no formato de played.json.',
+  noFileSelected: IS_EN
+    ? 'Select a file first.'
+    : 'Selecione um arquivo primeiro.',
   importSuccess: IS_EN
     ? 'Markings imported successfully.'
     : 'Marcações importadas com sucesso.',
@@ -45,7 +48,6 @@ const els = {
   exportBtn: document.getElementById('export-btn'),
   importBtn: document.getElementById('import-btn'),
   importPanel: document.getElementById('import-panel'),
-  importText: document.getElementById('import-text'),
   importFile: document.getElementById('import-file'),
   applyImport: document.getElementById('apply-import'),
   closeImport: document.getElementById('close-import'),
@@ -296,7 +298,11 @@ function downloadExport() {
   URL.revokeObjectURL(url);
 }
 
+let pendingImportText = '';
+
 function showImport() {
+  pendingImportText = '';
+  els.importFile.value = '';
   els.importMessage.classList.add('hidden');
   els.importPanel.classList.remove('hidden');
 }
@@ -306,7 +312,7 @@ function handleImportFile(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    els.importText.value = reader.result;
+    pendingImportText = reader.result;
   };
   reader.readAsText(file);
 }
@@ -318,9 +324,13 @@ function showImportMessage(text, isError) {
 }
 
 function applyImportedData() {
+  if (!pendingImportText) {
+    showImportMessage(I18N.noFileSelected, true);
+    return;
+  }
   let data;
   try {
-    data = JSON.parse(els.importText.value);
+    data = JSON.parse(pendingImportText);
   } catch {
     showImportMessage(I18N.invalidJson, true);
     return;
