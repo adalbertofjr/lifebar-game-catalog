@@ -3,8 +3,9 @@
 // read/write helpers.
 const IS_EN = document.documentElement.lang === 'en';
 const STORAGE_KEY = 'md-played-overrides';
-// favoritos de infância (item 2 do ROADMAP): só localStorage por enquanto, sem
-// arquivo base data/favorites.json nem exportar/importar, ao contrário de "jogado"
+// favoritos de infância (item 2 do ROADMAP): só localStorage, sem arquivo base
+// data/favorites.json (ao contrário de "jogado") - mas incluído no mesmo
+// mecanismo de exportar/importar de app.js (campo "favorite" por jogo)
 const FAVORITE_STORAGE_KEY = 'md-favorite-overrides';
 // set by localized pages (e.g. en/index.html, en/game.html) to reach data/ and assets/ at the site root
 const BASE_PATH = window.BASE_PATH || '';

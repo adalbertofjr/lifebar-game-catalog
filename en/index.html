@@ -60,10 +60,10 @@
         <button type="button" id="genre-filter-btn" class="genre-filter-btn" aria-haspopup="true" aria-expanded="false">Genre</button>
         <div id="genre-filter-menu" class="genre-filter-menu hidden"></div>
       </div>
-      <button id="export-btn" class="icon-btn" title="Export played.json" aria-label="Export played.json">
+      <button id="export-btn" class="icon-btn" title="Export markings (played/finished/favorites)" aria-label="Export markings (played/finished/favorites)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
       </button>
-      <button id="import-btn" class="icon-btn" title="Import played.json" aria-label="Import played.json">
+      <button id="import-btn" class="icon-btn" title="Import markings (played/finished/favorites)" aria-label="Import markings (played/finished/favorites)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M4 21h16"/></svg>
       </button>
       <button id="random-btn" class="icon-btn" title="Draw a game to play" aria-label="Draw a game to play">
@@ -72,15 +72,15 @@
     </section>
 
     <section id="export-panel" class="export-panel hidden">
-      <p>Copy the content below and save it to <code>data/played.json</code> to persist your markings in the repository.</p>
+      <p>Includes status (played/finished) and favorites. To restore later in this or another browser, save the file and use "Import". To persist just the status in the repository, paste the content into <code>data/played.json</code> (the <code>favorite</code> field is ignored there).</p>
       <textarea id="export-text" readonly></textarea>
       <button id="close-export">Close</button>
     </section>
 
     <section id="import-panel" class="export-panel hidden">
-      <p>Select a <code>played.json</code> file or paste its content below, then click "Apply" to restore your markings in this browser.</p>
+      <p>Select an exported file or paste its content below, then click "Apply" to restore status and favorites in this browser.</p>
       <input type="file" id="import-file" accept="application/json,.json">
-      <textarea id="import-text" placeholder='{"game-id": {"status": "finished", "dateAdded": "2024-01-01"}}'></textarea>
+      <textarea id="import-text" placeholder='{"game-id": {"status": "finished", "dateAdded": "2024-01-01", "favorite": true}}'></textarea>
       <div class="import-actions">
         <button id="apply-import">Apply</button>
         <button id="close-import">Close</button>

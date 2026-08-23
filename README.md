@@ -17,15 +17,15 @@ Site 100% estático (HTML/CSS/JS puro) e sem backend: os dados ficam em arquivos
 - Instalável como app (PWA) e funciona 100% offline depois da primeira visita.
 - Créditos e fontes de dados: veja a página [Créditos](credits.html) no site.
 
-## Marcando o status de um jogo
+## Marcando o status de um jogo e favoritos
 
-Clique no ícone da coluna "Jogado" na listagem (ou o equivalente na página de detalhe) para ciclar entre não jogado → jogado → finalizado → não jogado. A marcação é salva no `localStorage` do seu navegador na hora.
+Clique no ícone da coluna "Jogado" na listagem (ou o equivalente na página de detalhe) para ciclar entre não jogado → jogado → finalizado → não jogado. O coração marca/desmarca favoritos. Tudo é salvo no `localStorage` do seu navegador na hora.
 
-Como o site é estático, isso **não é salvo automaticamente no repositório**. Pra manter o progresso entre dispositivos/navegadores diferentes:
+Como o site é estático, isso **não é salvo automaticamente em nenhum servidor**. Pra manter o progresso entre dispositivos/navegadores diferentes:
 
-1. Clique em "Exportar played.json" no site.
+1. Clique em "Exportar marcações" no site — inclui status e favoritos.
 2. Guarde o arquivo gerado.
-3. Na próxima visita (outro navegador/dispositivo), use "Importar played.json" e selecione o arquivo salvo.
+3. Na próxima visita (outro navegador/dispositivo), use "Importar marcações" e selecione o arquivo salvo.
 
 ## Uso offline (PWA)
 

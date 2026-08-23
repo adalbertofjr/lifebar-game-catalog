@@ -277,9 +277,15 @@ function showExport() {
   const merged = {};
   games.forEach((g) => {
     const status = getStatus(g.id, overrides, basePlayed);
-    if (status === 'unplayed') return;
-    const dateAdded = (overrides[g.id] && overrides[g.id].dateAdded) || (basePlayed[g.id] && basePlayed[g.id].dateAdded) || '';
-    merged[g.id] = { status, dateAdded };
+    const favorite = isFavorite(g.id, favorites);
+    if (status === 'unplayed' && !favorite) return;
+    const entry = {};
+    if (status !== 'unplayed') {
+      entry.status = status;
+      entry.dateAdded = (overrides[g.id] && overrides[g.id].dateAdded) || (basePlayed[g.id] && basePlayed[g.id].dateAdded) || '';
+    }
+    if (favorite) entry.favorite = true;
+    merged[g.id] = entry;
   });
   const ordered = Object.fromEntries(Object.keys(merged).sort().map((k) => [k, merged[k]]));
   els.exportText.value = JSON.stringify(ordered, null, 2);
@@ -321,20 +327,27 @@ function applyImportedData() {
   }
 
   const newOverrides = {};
+  const newFavorites = {};
   games.forEach((g) => {
     const id = g.id;
-    const importedStatus = readStatus(data[id]);
+    const entry = data[id];
+    const importedStatus = readStatus(entry);
     const baseStatus = readStatus(basePlayed[id]);
     if (importedStatus !== baseStatus) {
       newOverrides[id] = {
         status: importedStatus,
-        dateAdded: (data[id] && data[id].dateAdded) || (overrides[id] && overrides[id].dateAdded) || new Date().toISOString().slice(0, 10),
+        dateAdded: (entry && entry.dateAdded) || (overrides[id] && overrides[id].dateAdded) || new Date().toISOString().slice(0, 10),
       };
+    }
+    if (entry && entry.favorite) {
+      newFavorites[id] = true;
     }
   });
 
   overrides = newOverrides;
+  favorites = newFavorites;
   saveOverrides(overrides);
+  saveFavorites(favorites);
   render();
   showImportMessage(I18N.importSuccess, false);
 }
