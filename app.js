@@ -43,9 +43,6 @@ const els = {
   progressFill: document.getElementById('progress-fill'),
   emptyState: document.getElementById('empty-state'),
   exportBtn: document.getElementById('export-btn'),
-  exportPanel: document.getElementById('export-panel'),
-  exportText: document.getElementById('export-text'),
-  closeExport: document.getElementById('close-export'),
   importBtn: document.getElementById('import-btn'),
   importPanel: document.getElementById('import-panel'),
   importText: document.getElementById('import-text'),
@@ -104,8 +101,7 @@ async function init() {
   els.filterStatus.addEventListener('change', render);
   els.filterFavorite.addEventListener('change', render);
   els.sortBy.addEventListener('change', render);
-  els.exportBtn.addEventListener('click', showExport);
-  els.closeExport.addEventListener('click', () => els.exportPanel.classList.add('hidden'));
+  els.exportBtn.addEventListener('click', downloadExport);
   els.importBtn.addEventListener('click', showImport);
   els.closeImport.addEventListener('click', () => els.importPanel.classList.add('hidden'));
   els.importFile.addEventListener('change', handleImportFile);
@@ -273,7 +269,7 @@ function render() {
   els.progressFill.style.width = `${games.length ? (totalPlayed / games.length) * 100 : 0}%`;
 }
 
-function showExport() {
+function downloadExport() {
   const merged = {};
   games.forEach((g) => {
     const status = getStatus(g.id, overrides, basePlayed);
@@ -288,8 +284,16 @@ function showExport() {
     merged[g.id] = entry;
   });
   const ordered = Object.fromEntries(Object.keys(merged).sort().map((k) => [k, merged[k]]));
-  els.exportText.value = JSON.stringify(ordered, null, 2);
-  els.exportPanel.classList.remove('hidden');
+
+  const blob = new Blob([JSON.stringify(ordered, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lifebar-marcacoes-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function showImport() {

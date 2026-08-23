@@ -60,7 +60,7 @@
         <button type="button" id="genre-filter-btn" class="genre-filter-btn" aria-haspopup="true" aria-expanded="false">Genre</button>
         <div id="genre-filter-menu" class="genre-filter-menu hidden"></div>
       </div>
-      <button id="export-btn" class="icon-btn" title="Export markings (played/finished/favorites)" aria-label="Export markings (played/finished/favorites)">
+      <button id="export-btn" class="icon-btn" title="Download markings (played/finished/favorites)" aria-label="Download markings (played/finished/favorites)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
       </button>
       <button id="import-btn" class="icon-btn" title="Import markings (played/finished/favorites)" aria-label="Import markings (played/finished/favorites)">
@@ -69,12 +69,6 @@
       <button id="random-btn" class="icon-btn" title="Draw a game to play" aria-label="Draw a game to play">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
       </button>
-    </section>
-
-    <section id="export-panel" class="export-panel hidden">
-      <p>Includes status (played/finished) and favorites. To restore later in this or another browser, save the file and use "Import". To persist just the status in the repository, paste the content into <code>data/played.json</code> (the <code>favorite</code> field is ignored there).</p>
-      <textarea id="export-text" readonly></textarea>
-      <button id="close-export">Close</button>
     </section>
 
     <section id="import-panel" class="export-panel hidden">

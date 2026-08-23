@@ -23,8 +23,8 @@ Clique no ícone da coluna "Jogado" na listagem (ou o equivalente na página de 
 
 Como o site é estático, isso **não é salvo automaticamente em nenhum servidor**. Pra manter o progresso entre dispositivos/navegadores diferentes:
 
-1. Clique em "Exportar marcações" no site — inclui status e favoritos.
-2. Guarde o arquivo gerado.
+1. Clique em "Baixar marcações" no site — baixa um `.json` com status e favoritos.
+2. Guarde o arquivo.
 3. Na próxima visita (outro navegador/dispositivo), use "Importar marcações" e selecione o arquivo salvo.
 
 ## Uso offline (PWA)

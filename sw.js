@@ -3,7 +3,7 @@
 // sempre a raiz do site (este arquivo mora na raiz), cobrindo /en/ também.
 // Bump em CACHE_NAME quando data/*.json ou os arquivos estáticos abaixo mudarem
 // de forma relevante, pra forçar a limpeza do cache antigo em `activate`.
-const CACHE_NAME = 'lifebar-v3';
+const CACHE_NAME = 'lifebar-v4';
 
 const ASSET_PATHS = [
   './',
